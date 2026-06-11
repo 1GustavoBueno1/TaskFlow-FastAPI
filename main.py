@@ -7,6 +7,7 @@ import bcrypt
 from app.models.models.user_db import Usuario
 from app.models.services.auth import criar_token, ler_token
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from app.models.models.task_db import Tasks
 app = FastAPI()
 auth2 = OAuth2PasswordBearer(tokenUrl="auth/login")
 Base.metadata.create_all(bind = engine)
