@@ -14,7 +14,7 @@ def criar_token(user_id: int) -> str:
 def ler_token(token: str) -> int:
     try:
         dados = jwt.decode(token, KEY, algorithms=[ALGORITMO])
-        return int[dados["sub"]]
+        return dados["sub"]
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Login expirado")
     except jwt.InvalidTokenError:

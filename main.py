@@ -11,10 +11,6 @@ app = FastAPI()
 auth2 = OAuth2PasswordBearer(tokenUrl="auth/login")
 Base.metadata.create_all(bind = engine)
 
-@app.get("/")
-def route():
-    return {"hello": "word"}
-
 class Cadastro(BaseModel):
     nome: str
     email: EmailStr
@@ -37,8 +33,8 @@ def cadastrar(usuario : Cadastro, db: Session = Depends(get_db)):
 
 @app.post("/auth/login")
 def login(dados: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    usuario = db.query(Usuario).filter(Usuario.email == dados.email).first()
-    if not usuario or not bcrypt.checkpw(dados.senha.encode(), usuario.senha.encode()):
+    usuario = db.query(Usuario).filter(Usuario.email == dados.username).first()
+    if not usuario or not bcrypt.checkpw(dados.password.encode(), usuario.senha.encode()):
         raise HTTPException(status_code=401, detail = "Email ou senha invalidos!")
     token = criar_token(usuario.id)
 
@@ -49,3 +45,6 @@ def usuario_logado(db: Session = Depends(get_db), token: str = Depends(auth2)):
     if not usuario:
         raise HTTPException(status_code=401, detail="Usuario não encontrado")
     return usuario
+@app.get("/perfil")
+def ver_perfil(usuario: Usuario = Depends(usuario_logado)):
+    return {"id": usuario.id, "nome": usuario.nome, "email": usuario.email}
