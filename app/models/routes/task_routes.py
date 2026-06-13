@@ -17,6 +17,13 @@ Base.metadata.create_all(bind = engine)
 class CriarTarefa(BaseModel):
     nome: str
     descricao: str
+
+class SaidaDaTarefa(BaseModel):
+    nome: str
+    descrição: str
+    status: str
+    class Config:
+        from_attributes = True
 @rotas_tarefas.post("/criar")
 def criar_tarefa(tarefa: CriarTarefa, usuario: Usuario = Depends(usuario_logado), db: Session = Depends(get_db)):
     nova_tarefa = Tasks(
@@ -28,3 +35,6 @@ def criar_tarefa(tarefa: CriarTarefa, usuario: Usuario = Depends(usuario_logado)
     db.commit()
     db.refresh(nova_tarefa)
     return {"Nome": nova_tarefa.nome, "Descrição": nova_tarefa.descrição, "Status": nova_tarefa.status}
+@rotas_tarefas.get("/visualizar_tarefas", response_model=list[SaidaDaTarefa])
+def visualizar_tarefas(usuario: Usuario = Depends(usuario_logado), db: Session = Depends(get_db)):
+    return db.query(Tasks).filter(Tasks.user_id == usuario.id).all()
