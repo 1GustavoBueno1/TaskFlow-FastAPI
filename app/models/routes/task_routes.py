@@ -3,10 +3,8 @@ from sqlalchemy.orm import Session
 from fastapi import FastAPI, APIRouter
 from pydantic import BaseModel, EmailStr
 from app.models.models.database import engine, Base, get_db
-import bcrypt
 from app.models.models.user_db import Usuario
 from app.models.services.auth import criar_token, ler_token
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from app.models.models.task_db import Tasks
 from app.models.routes.user_routes import usuario_logado
 
@@ -24,6 +22,11 @@ class SaidaDaTarefa(BaseModel):
     status: str
     class Config:
         from_attributes = True
+class EditarTarefas(BaseModel):
+    nome: str | None
+    descrição: str | None
+    status: str | None
+
 @rotas_tarefas.post("/criar")
 def criar_tarefa(tarefa: CriarTarefa, usuario: Usuario = Depends(usuario_logado), db: Session = Depends(get_db)):
     nova_tarefa = Tasks(
@@ -35,6 +38,20 @@ def criar_tarefa(tarefa: CriarTarefa, usuario: Usuario = Depends(usuario_logado)
     db.commit()
     db.refresh(nova_tarefa)
     return {"Nome": nova_tarefa.nome, "Descrição": nova_tarefa.descrição, "Status": nova_tarefa.status}
+
 @rotas_tarefas.get("/visualizar_tarefas", response_model=list[SaidaDaTarefa])
 def visualizar_tarefas(usuario: Usuario = Depends(usuario_logado), db: Session = Depends(get_db)):
     return db.query(Tasks).filter(Tasks.user_id == usuario.id).all()
+
+@rotas_tarefas.put("/editar_tarefa/{id_tarefa}", response_model= SaidaDaTarefa)
+def editar_tarefas(id_tarefa: int, dados: EditarTarefas, usuario: Usuario = Depends(usuario_logado), db: Session = Depends(get_db)):
+    tarefa = db.query(Tasks).filter(Tasks.id == id_tarefa, Tasks.user_id == usuario.id).first()   
+    if not tarefa:
+        raise HTTPException(status_code=404, detail="Tarefa não encontrada")
+    campos = dados.model_dump(exclude_unset=True)
+    for chave, valor in campos.items():
+        setattr(tarefa, chave, valor)
+
+    db.commit()
+    db.refresh(tarefa)
+    return tarefa
