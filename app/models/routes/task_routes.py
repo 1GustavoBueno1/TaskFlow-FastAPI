@@ -17,6 +17,7 @@ class CriarTarefa(BaseModel):
     descricao: str
 
 class SaidaDaTarefa(BaseModel):
+    id: int
     nome: str
     descrição: str
     status: str
@@ -55,3 +56,12 @@ def editar_tarefas(id_tarefa: int, dados: EditarTarefas, usuario: Usuario = Depe
     db.commit()
     db.refresh(tarefa)
     return tarefa
+
+@rotas_tarefas.delete("/deletar_tarefa/{id_tarefa}")
+def deletar_tarefa(id_tarefa: int, usuario: Usuario = Depends(usuario_logado), db: Session = Depends(get_db)):
+    task = db.query(Tasks).filter(Tasks.user_id == usuario.id, id_tarefa == Tasks.id).first()
+    if not task:
+        raise HTTPException(status_code=404, detail="Tarefa não foi encontrada")
+    db.delete(task)
+    db.commit()
+    return {"Sucesso": "Tarefa deletada"}
