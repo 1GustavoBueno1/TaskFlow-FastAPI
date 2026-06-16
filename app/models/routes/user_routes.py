@@ -16,6 +16,15 @@ class Cadastro(BaseModel):
     nome: str
     email: EmailStr
     senha: str
+class EditarPerfil(BaseModel):
+    nome: str | None
+    email: EmailStr | None
+    senha: str | None
+
+class UserOut(BaseModel):
+    id: int
+    nome: str
+    email: EmailStr
 @rotas_user.post('/cadastro')
 def cadastrar(usuario : Cadastro, db: Session = Depends(get_db)):
     email_existente = db.query(Usuario).filter(Usuario.email == usuario.email).first()
@@ -49,3 +58,20 @@ def usuario_logado(db: Session = Depends(get_db), token: str = Depends(auth2)):
 @rotas_user.get("/perfil")
 def ver_perfil(usuario: Usuario = Depends(usuario_logado)):
     return {"id": usuario.id, "nome": usuario.nome, "email": usuario.email}
+
+@rotas_user.put("/editar_perfil", response_model = UserOut)
+def editar_perfil(dados: EditarPerfil, usuario: Usuario = Depends(usuario_logado), db: Session = Depends(get_db)):
+    campos = dados.model_dump(exclude_unset=True)
+    if "email" in campos:
+        existe = db.query(Usuario).filter(Usuario.email == campos["email"],Usuario.id != usuario.id).first()
+        if existe:
+            raise HTTPException(status_code=400, detail="Email já cadastrado")
+    if "senha" in campos:
+        senha_pura = campos.pop("senha")
+        usuario.senha = bcrypt.hashpw(senha_pura.encode(), bcrypt.gensalt()).decode()
+    for chave, item in campos.items():
+        setattr(usuario, chave, item)
+
+    db.commit()
+    db.refresh(usuario)
+    return usuario
