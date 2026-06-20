@@ -30,3 +30,9 @@ def test_login_erro(cliente):
         "password": "senha_errada"
     })
     assert resposta.status_code == 401
+def test_login_inexistente(cliente):
+    resposta = cliente.post("/usuario/login", data = {
+        "username": "pedro@naoexiste.com",
+        "password": "naoexitse"
+    })
+    assert resposta.status_code == 401
