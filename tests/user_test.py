@@ -22,3 +22,9 @@ def test_login_sucesso(cliente):
     })
     assert resposta.status_code == 200
     assert "access_token" in resposta.json()
+def teste_login_erro(cliente):
+    resposta = cliente.post("/usuario/login", json = {
+        "username": "gustavo@gmail.com",
+        "password": "gustavo3010"
+    })
+    assert resposta.status_code == 401
