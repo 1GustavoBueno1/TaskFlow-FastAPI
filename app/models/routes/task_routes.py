@@ -38,7 +38,7 @@ def criar_tarefa(tarefa: CriarTarefa, usuario: Usuario = Depends(usuario_logado)
     db.add(nova_tarefa)
     db.commit()
     db.refresh(nova_tarefa)
-    return {"Nome": nova_tarefa.nome, "Descrição": nova_tarefa.descrição, "Status": nova_tarefa.status}
+    return {'id': nova_tarefa.id, "Nome": nova_tarefa.nome, "Descrição": nova_tarefa.descrição, "Status": nova_tarefa.status}
 
 @rotas_tarefas.get("/visualizar_tarefas", response_model=list[SaidaDaTarefa])
 def visualizar_tarefas(usuario: Usuario = Depends(usuario_logado), db: Session = Depends(get_db)):
