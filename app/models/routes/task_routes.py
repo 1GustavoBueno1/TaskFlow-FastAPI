@@ -24,9 +24,9 @@ class SaidaDaTarefa(BaseModel):
     class Config:
         from_attributes = True
 class EditarTarefas(BaseModel):
-    nome: str | None
-    descrição: str | None
-    status: str | None
+    nome: str | None = None
+    descrição: str | None = None
+    status: str | None = None
 
 @rotas_tarefas.post("/criar")
 def criar_tarefa(tarefa: CriarTarefa, usuario: Usuario = Depends(usuario_logado), db: Session = Depends(get_db)):
