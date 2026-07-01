@@ -11,7 +11,7 @@ from app.models.routes.user_routes import usuario_logado
 rotas_tarefas = APIRouter(prefix="/tarefas", tags=["tarefas"])
 
 
-Base.metadata.create_all(bind = engine)
+
 class CriarTarefa(BaseModel):
     nome: str
     descricao: str
