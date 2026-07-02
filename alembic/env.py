@@ -5,7 +5,6 @@ from app.models.models.database import Base
 from app.models.models.task_db import Tasks
 from app.models.models.user_db import Usuario
 import os
-
 from alembic import context
 
 # this is the Alembic Config object, which provides

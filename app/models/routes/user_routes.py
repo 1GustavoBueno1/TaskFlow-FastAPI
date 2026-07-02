@@ -8,7 +8,6 @@ from app.models.models.user_db import Usuario
 from app.models.services.auth import criar_token, ler_token
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 auth2 = OAuth2PasswordBearer(tokenUrl="/usuario/login")
-Base.metadata.create_all(bind = engine)
 
 rotas_user = APIRouter(prefix="/usuario", tags=["usuario"])
 
