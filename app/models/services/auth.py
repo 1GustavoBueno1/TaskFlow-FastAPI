@@ -3,10 +3,10 @@ import os
 from datetime import timezone, datetime, timedelta
 from dotenv import load_dotenv
 from fastapi import HTTPException
+load_dotenv()
 KEY = os.getenv('JWT_SECRET')
 ALGORITMO = 'HS256'
 EXPIRA_MIN = 60
-load_dotenv()
 def criar_token(user_id: int) -> str:
     expira = datetime.now(timezone.utc) + timedelta(minutes= EXPIRA_MIN)
     dados = {'sub': str(user_id), 'exp': expira}
