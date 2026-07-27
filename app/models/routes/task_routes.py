@@ -14,7 +14,7 @@ rotas_tarefas = APIRouter(prefix="/tarefas", tags=["tarefas"])
 
 class CriarTarefa(BaseModel):
     nome: str
-    descricao: str
+    descricao: str | None = None
 
 class SaidaDaTarefa(BaseModel):
     id: int

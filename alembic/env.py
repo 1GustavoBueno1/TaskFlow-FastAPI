@@ -6,11 +6,18 @@ from app.models.models.task_db import Tasks
 from app.models.models.user_db import Usuario
 import os
 from alembic import context
+from dotenv import load_dotenv
+load_dotenv()
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
-config.set_main_option("sqlalchemy.url", os.getenv("DATABASE_URL", "sqlite:///./Taskflow.db"))
+url = os.getenv("DATABASE_URL")
+if not url:
+    raise RuntimeError(
+        "DATABASE_URL não definida. Recusando rodar migration contra banco desconhecido."
+    )
+config.set_main_option("sqlalchemy.url", url)
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
 if config.config_file_name is not None:
