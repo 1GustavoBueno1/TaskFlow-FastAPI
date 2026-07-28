@@ -30,15 +30,11 @@ class EditarTarefas(BaseModel):
 
 @rotas_tarefas.post("/criar")
 def criar_tarefa(tarefa: CriarTarefa, usuario: Usuario = Depends(usuario_logado), db: Session = Depends(get_db)):
-    nova_tarefa = Tasks(
-        user_id = usuario.id,
-        nome = tarefa.nome,
-        descrição = tarefa.descricao
-    )
-    db.add(nova_tarefa)
+    nova = Tasks(**tarefa.model_dump(), user_id=usuario.id)
+    db.add(nova)
     db.commit()
-    db.refresh(nova_tarefa)
-    return {'id': nova_tarefa.id, "Nome": nova_tarefa.nome, "Descrição": nova_tarefa.descrição, "Status": nova_tarefa.status}
+    db.refresh(nova)
+    return {'id': nova.id, "Nome": nova.nome, "Descrição": nova.descricao, "Status": nova.status}
 
 @rotas_tarefas.get("/visualizar_tarefas", response_model=list[SaidaDaTarefa])
 def visualizar_tarefas(usuario: Usuario = Depends(usuario_logado), db: Session = Depends(get_db)):

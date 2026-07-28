@@ -8,5 +8,5 @@ class Tasks(Base):
     user_id = Column(Integer, ForeignKey("usuarios.id"), nullable=False)
     dono = relationship("Usuario")
     nome = Column(String, nullable=False)
-    descrição = Column(String, nullable=True)
+    descricao = Column("descrição", String, nullable=True)
     status = Column(String, nullable=False, default="Pendente")
