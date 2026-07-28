@@ -19,7 +19,7 @@ class CriarTarefa(BaseModel):
 class SaidaDaTarefa(BaseModel):
     id: int
     nome: str
-    descrição: str
+    descrição: str | None = None
     status: str
     class Config:
         from_attributes = True
