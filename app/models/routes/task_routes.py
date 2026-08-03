@@ -19,13 +19,13 @@ class CriarTarefa(BaseModel):
 class SaidaDaTarefa(BaseModel):
     id: int
     nome: str
-    descrição: str | None = None
+    descricao: str | None = None
     status: str
     class Config:
         from_attributes = True
 class EditarTarefas(BaseModel):
     nome: str | None = None
-    descrição: str | None = None
+    descricao: str | None = None
     status: str | None = None
 
 @rotas_tarefas.post("/criar")
